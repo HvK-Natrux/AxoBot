@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bot Logs</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .log-entry { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .error { background-color: #ffe6e6; }
+        .info { background-color: #e6f3ff; }
+    </style>
+</head>
+<body>
+    <h1>Bot Logs</h1>
+    <div id="logs">
+        {% for log in logs %}
+        <div class="log-entry {{ log.level.lower() }}">
+            <strong>{{ log.timestamp }}</strong> - {{ log.level }}<br>
+            {{ log.message }}
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

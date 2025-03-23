@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8 text-center">Paramètres du Bot</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="mb-4 p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if not is_authenticated %}
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <form method="POST" class="space-y-4">
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe administrateur</label>
+                <input type="password" name="password" id="password" required
+                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+            </div>
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                Se connecter
+            </button>
+        </form>
+    </div>
+    {% else %}
+    <div class="bg-white rounded-lg shadow-md">
+        <div class="p-6">
+            {% set categories = settings|groupby('category') %}
+            {% for category, settings_list in categories %}
+            <div class="mb-8 last:mb-0">
+                <h2 class="text-xl font-semibold mb-4">{{ category }}</h2>
+                <div class="space-y-4">
+                    {% for setting in settings_list %}
+                    <div class="border rounded-lg p-4">
+                        <form method="POST" class="space-y-2">
+                            <input type="hidden" name="setting_name" value="{{ setting.name }}">
+                            <label class="block text-sm font-medium text-gray-700">
+                                {{ setting.description }}
+                            </label>
+                            <div class="flex space-x-2">
+                                <input type="text" name="value" value="{{ setting.value }}"
+                                    class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                                <button type="submit"
+                                    class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
+                                    Sauvegarder
+                                </button>
+                            </div>
+                            <p class="text-sm text-gray-500">
+                                Dernière modification : {{ setting.updated_at.strftime('%d/%m/%Y %H:%M') }}
+                            </p>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="mt-4 text-right">
+        <a href="{{ url_for('logout') }}" class="text-red-600 hover:text-red-800">
+            Se déconnecter
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
